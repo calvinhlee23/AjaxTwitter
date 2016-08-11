@@ -46,9 +46,11 @@
 
 	const FollowToggle = __webpack_require__(1);
 	const UserSearch = __webpack_require__(2);
+	const TweetCompose = __webpack_require__(3);
 	$(function () {
 	  $("button.follow-toggle").each((i, btn) => new FollowToggle(btn, {}));
 	  $("nav.user-search").each((i, nav) => new UserSearch(nav));
+	  $("form.tweet-compose").each((i, form) => new TweetCompose(form));
 	});
 
 
@@ -155,6 +157,31 @@
 	};
 	
 	module.exports = UserSearch;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	function TweetCompose (form) {
+	  this.$el = $(form);
+	  let $textArea = $("<textarea>");
+	  this.$el.append($textArea);
+	  let $submit = $("<button>");
+	  $submit.text('submit');
+	  this.$el.append($submit);
+	  this.$submit = $submit;
+	
+	
+	  // this.$submit.on("click", this.submit.bind(this));
+	}
+	
+	TweetCompose.prototype.submit = function (event) {
+	  event.preventDefault();
+	
+	};
+	
+	module.exports = TweetCompose;
 
 
 /***/ }
