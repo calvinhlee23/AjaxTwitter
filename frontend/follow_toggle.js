@@ -1,9 +1,10 @@
-function FollowToggle(btn) {
-  console.log('hi from FollowToggle')
+function FollowToggle(btn, options = {}) {
   this.$el = $(btn);
-  this.userId = this.$el.data("userId");
+  this.userId = this.$el.data("userId") ?
+                this.$el.data("userID") : options.userId;
   // if true, currentuser is already following him/her
-  this.followState = this.$el.data('initialFollowState');
+  this.followState = this.$el.data('initialFollowState') ?
+                     this.$el.data('initialFollowState') : options.initialFollowState;
   this.render();
   this.$el.on("click", this.handleClick.bind(this));
 }
@@ -18,7 +19,6 @@ FollowToggle.prototype.render = function () {
 
 FollowToggle.prototype.handleClick = function(event) {
   event.preventDefault();
-  console.log('hello from handle click')
   const FT = this;
 
   if (this.followState === "unfollowed") {
