@@ -13,9 +13,26 @@ function TweetCompose (form) {
   this.$el.append($counter);
   this.$counter = $counter;
 
+  this.$mention = this.$el.find("a.add-mentioned-user");
+
+  this.$remvmention = this.$el.find("a.remove-mentioned-user");
+
+  this.$mention.on('click', this.addMentionedUser.bind(this));
   this.$textarea.on('input', this.counter.bind(this));
   this.$submit.on("click", this.submit.bind(this));
 }
+
+TweetCompose.prototype.removeMentionedUser = function (event) {
+  event.preventDefault();
+  $(event.currentTarget).parent().remove();
+};
+
+TweetCompose.prototype.addMentionedUser = function (event) {
+  let scriptHTML = $('script').html();
+  this.$el.find('div.mentioned-user').append(scriptHTML);
+  this.$remvmention = this.$el.find("a.remove-mentioned-user");
+  this.$remvmention.on('click', this.removeMentionedUser.bind(this));
+};
 
 TweetCompose.prototype.counter = function (event) {
   let inLength = this.$textarea.val().length;
