@@ -6,41 +6,51 @@ function InfiniteTweets(div) {
   this.maxCreatedAt = null;
 
   this.$more.on("click", this.fetchTweets.bind(this));
+  this.$el.on("insert-tweet", this.insertTweet.bind(this));
 }
 
 InfiniteTweets.prototype.fetchTweets = function (event) {
+  const infiniteTweets = this;
   if (this.maxCreatedAt !== null) {
     $.ajax({
       method: "GET",
       url: "/feed",
       dataType: "json",
       data: {max_created_at: `${this.maxCreatedAt}`},
-      success: this.insertTweet.bind(this)
+      success(data) {
+        infiniteTweets.insertTweet(event, data);
+      }
     });
   } else {
     $.ajax({
       method: "GET",
       url: "/feed",
       dataType: "json",
-      success: this.insertTweet.bind(this)
+      success(data) {
+        infiniteTweets.insertTweet(event, data);
+      }
     });
   }
 };
 
-InfiniteTweets.prototype.insertTweet = function (tweets) {
-
-  if (tweets.length === 0 || tweets.length < 20) {
+InfiniteTweets.prototype.insertTweet = function (event, tweets) {
+  if (tweets.length === 0 || $('ul#feed li').length >=20) {
     this.$more.replaceWith('<b> no more tweets <b>');
+    return;
   }
 
-  this.maxCreatedAt = tweets[0].created_at;
-  console.log(this.maxCreatedAt);
+  if (tweets.length) {
+    this.maxCreatedAt = tweets[0].created_at;
+    let $li = $('<li>').text(JSON.stringify(tweets[0].content));
+    this.$ul.append($li);
+  }
+  else {
+    this.maxCreatedAt = tweets.created_at;
+    console.log(this.maxCreatedAt);
+    let $li = $('<li>').text(JSON.stringify(tweets.content));
+    this.$ul.append($li);
+  }
 
-  let $li = $('<li>').text(JSON.stringify(tweets[0].content));
-  this.$ul.append($li);
 };
 
-// InfiniteTweets.prototype. = function () {
-//
-// };
 module.exports = InfiniteTweets;

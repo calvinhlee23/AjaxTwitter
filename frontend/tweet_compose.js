@@ -55,9 +55,7 @@ TweetCompose.prototype.submit = function (event) {
 
 TweetCompose.prototype.handleSuccess = function (data) {
   const $tweetsUl = $("ul#feed");
-  let $li = $('<li>').text(JSON.stringify(data.content));
-
-  $tweetsUl.append($li);
+  $tweetsUl.trigger('insert-tweet', data);
   this.clearInput();
 };
 
