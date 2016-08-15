@@ -57,7 +57,6 @@ TweetCompose.prototype.handleSuccess = function (data) {
   const $tweetsUl = $("ul#feed");
   let $li = $('<li>').text(JSON.stringify(data.content));
 
-  console.log($li.text());
   $tweetsUl.append($li);
   this.clearInput();
 };

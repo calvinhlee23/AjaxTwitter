@@ -47,10 +47,13 @@
 	const FollowToggle = __webpack_require__(1);
 	const UserSearch = __webpack_require__(2);
 	const TweetCompose = __webpack_require__(3);
+	const InfiniteTweets = __webpack_require__(4);
+	
 	$(function () {
 	  $("button.follow-toggle").each((i, btn) => new FollowToggle(btn, {}));
 	  $("nav.user-search").each((i, nav) => new UserSearch(nav));
 	  $("form.tweet-compose").each((i, form) => new TweetCompose(form));
+	  $("div.infinite-tweets").each((i, div) => new InfiniteTweets(div));
 	});
 
 
@@ -222,7 +225,6 @@
 	  const $tweetsUl = $("ul#feed");
 	  let $li = $('<li>').text(JSON.stringify(data.content));
 	
-	  console.log($li.text());
 	  $tweetsUl.append($li);
 	  this.clearInput();
 	};
@@ -233,6 +235,58 @@
 	  this.$counter.empty();
 	};
 	module.exports = TweetCompose;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	function InfiniteTweets(div) {
+	  this.$el = $(div);
+	  this.$ul = $("div ul");
+	  this.$more = $("a.fetch-more");
+	
+	  this.maxCreatedAt = null;
+	
+	  this.$more.on("click", this.fetchTweets.bind(this));
+	}
+	
+	InfiniteTweets.prototype.fetchTweets = function (event) {
+	  if (this.maxCreatedAt !== null) {
+	    $.ajax({
+	      method: "GET",
+	      url: "/feed",
+	      dataType: "json",
+	      data: {max_created_at: `${this.maxCreatedAt}`},
+	      success: this.insertTweet.bind(this)
+	    });
+	  } else {
+	    $.ajax({
+	      method: "GET",
+	      url: "/feed",
+	      dataType: "json",
+	      success: this.insertTweet.bind(this)
+	    });
+	  }
+	};
+	
+	InfiniteTweets.prototype.insertTweet = function (tweets) {
+	
+	  if (tweets.length === 0 || tweets.length < 20) {
+	    this.$more.replaceWith('<b> no more tweets <b>');
+	  }
+	
+	  this.maxCreatedAt = tweets[0].created_at;
+	  console.log(this.maxCreatedAt);
+	
+	  let $li = $('<li>').text(JSON.stringify(tweets[0].content));
+	  this.$ul.append($li);
+	};
+	
+	// InfiniteTweets.prototype. = function () {
+	//
+	// };
+	module.exports = InfiniteTweets;
 
 
 /***/ }
